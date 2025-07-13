@@ -30,17 +30,6 @@ export const UserList = () => (
         sortable // Разрешить сортировку
       />
       
-      {/* Дополнительная информация для отладки */}
-      <FunctionField
-        label="Статус покупок"
-        render={(record: any) => {
-          if (!record.PURCHASES) return 'Поле отсутствует';
-          if (!Array.isArray(record.PURCHASES)) return 'Не массив';
-          return record.PURCHASES.length > 0 
-            ? `${record.PURCHASES.length} покупок` 
-            : 'Нет покупок';
-        }}
-      />
     </Datagrid>
   </List>
 );

@@ -4,7 +4,7 @@ export interface User {
   ID?: string;
   _id?: string;
   NICKNAME: string;
-  REGISTER: string;
+  REGISTRATION : string;
   PURCHASES: Purchase[];
   CURRENCIES: Currency[];
   purchasesCount?: number; // Добавляем вычисляемое поле

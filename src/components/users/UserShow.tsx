@@ -23,14 +23,15 @@ import {
     Box,
     Accordion,
     AccordionSummary,
-    AccordionDetails,
-    colors
+    AccordionDetails
 } from '@mui/material'; 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ReactNode, useState } from 'react';
 import { DwarfTypeWithIcon, ResourcesTypeWithIcon } from '../../common/iconComponents';
 import { NoCheckboxDatagrid } from '../../common/commonComponents';
-import TonTransactionsSection from './TonTransactionsSection';
+import TonTransactionsSection from './TonTransactionsSection'; 
+import { ManufactureUserDetails } from '../manufacture/ManufactureUserDetails'; 
+import  {CoinageUserDetails}  from '../coinage/CoinageUserDetails';
 
 
 const UserTitle = () => {
@@ -227,34 +228,21 @@ export const UserShow = () => {
                 </Accordion>
 
                 {/* Финансовые операции */}
-                <LazyAccordion title="Вовод Вывод Тон">
+                <LazyAccordion title="[Вовод Вывод Тон]">
                     <TonTransactionsSection />
                 </LazyAccordion>
 
-                {/* Производство */}
-                <LazyAccordion title="Производство">
-                    <ArrayField source="MANUFACTURES" label="Текущие переработки">
-                        <Datagrid>
-                            <DateField source="START_DATE" label="Начало" showTime />
-                            <TextField source="TYPE" label="Тип" />
-                            <NumberField source="AMOUNT" label="Количество" />
-                            <TextField source="STATUS" label="Статус" />
-                        </Datagrid>
-                    </ArrayField>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <ArrayField source="COINAGES" label="Текущая чеканка">
-                        <Datagrid>
-                            <DateField source="DATE" label="Дата" showTime />
-                            <NumberField source="AMOUNT" label="Количество" />
-                            <TextField source="STATUS" label="Статус" />
-                        </Datagrid>
-                    </ArrayField>
+                {/* [Операции по переработкам] */}
+                <LazyAccordion title="[Операции по переработкам]">
+                    <ManufactureUserDetails />
                 </LazyAccordion>
+                
+                <LazyAccordion title="[Операции по чеканке]">
+                    <CoinageUserDetails />
+                </LazyAccordion> 
 
-                {/* Ресурсы */}
-                <LazyAccordion title="Ресурсы">
+                {/* [Операции по складу] */}
+                <LazyAccordion title="[Операции по складу]">
                     <SimpleShowLayout> 
                         <Box sx={{ width: '100%' }}>
                             <Typography variant="h6" sx={{ textAlign: 'left' }} gutterBottom>Текущий склад</Typography>
@@ -324,89 +312,10 @@ export const UserShow = () => {
                         </ArrayField>
                     </SimpleShowLayout>
                 </LazyAccordion>
-
-                {/* Рынок */}
-                <LazyAccordion title="Рынок">
-                    <ArrayField source="SALES" label="История продаж">
-                        <Datagrid>
-                            <DateField source="DATE" label="Дата" showTime />
-                            <TextField source="ITEM" label="Товар" />
-                            <NumberField source="AMOUNT" label="Количество" />
-                            <NumberField source="PRICE" label="Цена" />
-                            <ReferenceField source="BUYER_ID" reference="users" label="Покупатель">
-                                <TextField source="NICKNAME" />
-                            </ReferenceField>
-                        </Datagrid>
-                    </ArrayField>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <ArrayField source="PURCHASES" label="История покупок">
-                        <Datagrid>
-                            <DateField source="DATE" label="Дата" showTime />
-                            <TextField source="ITEM" label="Товар" />
-                            <NumberField source="AMOUNT" label="Количество" />
-                            <NumberField source="PRICE" label="Цена" />
-                            <ReferenceField source="SELLER_ID" reference="users" label="Продавец">
-                                <TextField source="NICKNAME" />
-                            </ReferenceField>
-                        </Datagrid>
-                    </ArrayField>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <MarketStatsTab />
-                </LazyAccordion>
-
-                {/* Письма */}
-                <LazyAccordion title="Письма">
-                    <ArrayField source="MAILS" label="Текущие письма">
-                        <Datagrid>
-                            <DateField source="DATE" label="Дата" showTime />
-                            <TextField source="FROM" label="От" />
-                            <TextField source="SUBJECT" label="Тема" />
-                            <TextField source="STATUS" label="Статус" />
-                        </Datagrid>
-                    </ArrayField>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <ArrayField source="MAILS_OLD" label="Архив писем">
-                        <Datagrid>
-                            <DateField source="DATE" label="Дата" showTime />
-                            <TextField source="FROM" label="От" />
-                            <TextField source="SUBJECT" label="Тема" />
-                        </Datagrid>
-                    </ArrayField>
-                </LazyAccordion>
-
-                {/* Акции */}
-                <LazyAccordion title="Акции">
-                    <ArrayField source="STOCKS" label="Текущие акции">
-                        <Datagrid>
-                            <TextField source="COMPANY" label="Компания" />
-                            <NumberField source="AMOUNT" label="Количество" />
-                            <NumberField source="DIVIDENDS" label="Дивиденды" />
-                            <DateField source="LAST_DIVIDEND_DATE" label="Последние дивиденды" showTime />
-                        </Datagrid>
-                    </ArrayField>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <ArrayField source="STOCK_HISTORY" label="История операций">
-                        <Datagrid>
-                            <DateField source="DATE" label="Дата" showTime />
-                            <TextField source="TYPE" label="Тип операции" />
-                            <NumberField source="AMOUNT" label="Количество" />
-                            <NumberField source="PRICE" label="Цена" />
-                        </Datagrid>
-                    </ArrayField>
-                </LazyAccordion>
-
-                {/* Инвентарь дворфов */}
-                <LazyAccordion title="Инвентарь дворфов">
+                {/*[Операции по гномам] */}
+                <LazyAccordion title="[Операции по гномам]">
                     <UserDwarvesTab />
-                </LazyAccordion>
+                </LazyAccordion> 
             </Box>
         </Show>
     );

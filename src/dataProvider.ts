@@ -33,7 +33,51 @@ export const dataProvider: DataProvider = {
             };
         }
 
-        
+        if (resource === 'manufacture_user') {
+          const userId = params.filter?.user_id;
+          if (!userId) throw new Error('user_id is required for manufacture_user');
+          
+          const query = {
+              filter: JSON.stringify({ user_id: userId }),
+              ...(params.pagination && {
+                  range: JSON.stringify([
+                      (params.pagination.page - 1) * params.pagination.perPage,
+                      params.pagination.page * params.pagination.perPage - 1
+                  ])
+              }),
+              ...(params.sort && {
+                  sort: JSON.stringify([params.sort.field, params.sort.order])
+              })
+          };
+          
+          const url = `${apiUrl}/${resource}?${stringify(query)}`; 
+          
+          try {
+              const { json, headers } = await httpClient(url); 
+              
+              return {
+                  data: Array.isArray(json) ? json : [],
+                  total: parseInt(headers.get('content-range')?.split('/').pop() || '0', 10)
+              };
+          } catch (error) {
+              console.error('API error:', error);
+              throw error;
+          }
+      }
+
+     if (resource === 'coinage_user') {
+        const userId = params.filter?.user_id;
+        if (!userId) throw new Error('user_id is required');
+
+        const url = `${apiUrl}/coinage_user/${userId}`; // ← тут путь с userId
+        const response = await httpClient(url);
+
+        return {
+          data: Array.isArray(response.json) ? response.json : [response.json],
+          total: Array.isArray(response.json) ? response.json.length : 1
+        };
+      }
+
         // Обработка для выводов TON
         if (resource === 'ton_withdraw') {
             const userId = params.filter?.user_id;
