@@ -1,0 +1,176 @@
+// src/dataProvider.ts
+import { fetchUtils } from 'react-admin';
+import { stringify } from 'query-string';
+import { DataProvider } from 'react-admin';
+import { User } from './typesAPI';
+
+//const apiUrl = 'https://njj6h14m-3001.euw.devtunnels.ms/api';
+const apiUrl = 'http://localhost:3001/api'; 
+
+const httpClient = fetchUtils.fetchJson;
+
+export const dataProvider: DataProvider = {
+  getList: async (resource, params) => {
+        const { page = 1, perPage = 10 } = params.pagination || {};
+        const { field = 'id', order = 'ASC' } = params.sort || {};
+        
+        // Специальная обработка для транзакций
+        if (resource === 'transactions' && params.filter?.['in_msg.source']) {
+            const filter = {
+                status: 'complete',
+                'in_msg.source': params.filter['in_msg.source']
+            };
+            
+            const url = `${apiUrl}/${resource}?filter=${JSON.stringify(filter)}`;
+            const { json } = await httpClient(url);
+            
+            return {
+                data: json.map((item: any) => ({
+                    ...item,
+                    id: item._id || item.txHash
+                })),
+                total: json.length
+            };
+        }
+
+        
+        // Обработка для выводов TON
+        if (resource === 'ton_withdraw') {
+            const userId = params.filter?.user_id;
+            if (!userId) throw new Error('user_id is required for ton_withdraw');
+            
+            const url = `${apiUrl}/users/${userId}/ton/withdrawals`;
+            const { json } = await httpClient(url);
+            
+            return {
+                data: json.map((item: any) => ({
+                    ...item,
+                    id: item._id || item.transaction_id
+                })),
+                total: json.length
+            };
+        }
+
+        // Стандартная обработка для других ресурсов
+        const query = {
+            range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+            sort: JSON.stringify([field, order]),
+            filter: JSON.stringify(params.filter || {})
+        };
+        
+        const url = `${apiUrl}/${resource}?${stringify(query)}`;
+        const { json, headers } = await httpClient(url);
+
+        return {
+            data: json.map((item: any) => ({
+                ...item,
+                id: item._id || item.ID || item.id
+            })),
+            total: parseInt(headers.get('content-range')?.split('/').pop() || '0', 10)
+        };
+    },
+
+    getOne: async (resource, params) => {
+        const url = `${apiUrl}/${resource}/${params.id}`;
+        const { json } = await httpClient(url);
+        
+        return {
+            data: {
+                ...json,
+                id: json._id || json.ID || json.id
+            }
+        };
+    },
+
+  getMany: async (resource, params) => {
+    const query = { filter: JSON.stringify({ id: params.ids }) };
+    const url = `${apiUrl}/${resource}?${stringify(query)}`;
+    const { json } = await httpClient(url);
+    return { data: json.map((item: any) => ({ ...item, id: item.ID || item._id || item.id })) };
+  },
+ 
+
+  getManyReference: async (resource, params) => {
+    const { page, perPage } = params.pagination;
+    const { field, order } = params.sort;
+    
+    const query = {
+      range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+      sort: JSON.stringify([field, order]),
+      filter: JSON.stringify({
+        ...params.filter,
+        [params.target]: params.id,
+      }),
+    };
+    const url = `${apiUrl}/${resource}?${stringify(query)}`;
+    const { headers, json } = await httpClient(url);
+
+    return {
+      data: json.map((item: any) => ({
+        ...item,
+        id: item.ID || item._id || item.id,
+      })),
+      total: parseInt(headers.get('content-range')?.split('/').pop() || '0', 10),
+    };
+  },
+
+  create: (resource, params) => {
+    return httpClient(`${apiUrl}/${resource}`, {
+      method: 'POST',
+      body: JSON.stringify(params.data),
+    }).then(({ json }) => ({
+      data: {
+        ...json,
+        id: json.ID || json._id || json.id,
+      },
+    }));
+  },
+
+  update: (resource, params) => {
+    return httpClient(`${apiUrl}/${resource}/${params.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(params.data),
+    }).then(({ json }) => ({
+      data: {
+        ...json,
+        id: json.ID || json._id || json.id,
+      },
+    }));
+  },
+
+  updateMany: async (resource, params) => {
+    const responses = await Promise.all(
+      params.ids.map(id =>
+        httpClient(`${apiUrl}/${resource}/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(params.data),
+        })
+      )
+    );
+
+    return { data: responses.map(({ json }) => json.id) };
+  },
+
+  delete: (resource, params) => {
+    return httpClient(`${apiUrl}/${resource}/${params.id}`, {
+      method: 'DELETE',
+    }).then(({ json }) => ({
+      data: {
+        ...json,
+        id: json.ID || json._id || json.id,
+      },
+    }));
+  },
+
+  deleteMany: async (resource, params) => {
+    await Promise.all(
+      params.ids.map(id =>
+        httpClient(`${apiUrl}/${resource}/${id}`, {
+          method: 'DELETE',
+        })
+      )
+    );
+
+    return { data: params.ids };
+  },
+};
