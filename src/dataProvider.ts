@@ -1,8 +1,7 @@
 // src/dataProvider.ts
 import { fetchUtils } from 'react-admin';
 import { stringify } from 'query-string';
-import { DataProvider } from 'react-admin';
-import { User } from './typesAPI';
+import { DataProvider } from 'react-admin'; 
 
 //const apiUrl = 'https://njj6h14m-3001.euw.devtunnels.ms/api';
 const apiUrl = 'http://localhost:3001/api'; 
@@ -14,24 +13,71 @@ export const dataProvider: DataProvider = {
         const { page = 1, perPage = 10 } = params.pagination || {};
         const { field = 'id', order = 'ASC' } = params.sort || {};
         
-        // Специальная обработка для транзакций
-        if (resource === 'transactions' && params.filter?.['in_msg.source']) {
-            const filter = {
-                status: 'complete',
-                'in_msg.source': params.filter['in_msg.source']
-            };
-            
-            const url = `${apiUrl}/${resource}?filter=${JSON.stringify(filter)}`;
-            const { json } = await httpClient(url);
-            
-            return {
-                data: json.map((item: any) => ({
-                    ...item,
-                    id: item._id || item.txHash
-                })),
-                total: json.length
-            };
-        }
+         // Обработка для выводов TON
+/////////////
+          if (resource === 'ton_withdraw') {
+              const hasWallet = params.filter?.hasWallet;
+              if(!hasWallet){
+                  return {
+                    data:[],
+                    total: 0
+                };
+              }
+
+              const userId = params.filter?.user_id;
+              if (!userId) throw new Error('user_id is required for ton_withdraw');
+              
+              const url = `${apiUrl}/users/${userId}/ton/withdrawals`;
+              const { json } = await httpClient(url);
+              
+              return {
+                  data: json.map((item: any) => ({
+                      ...item,
+                      id: item._id || item.transaction_id
+                  })),
+                  total: json.length
+              };
+          }
+          if (resource === 'ton_deposit') {
+              const hasWallet = params.filter?.hasWallet;
+              if(!hasWallet){
+                  return {
+                    data:[],
+                    total: 0
+                };
+              }
+              
+              const userId = params.filter?.user_id;
+              if (!userId) throw new Error('user_id is required for ton_deposit');
+
+              const url = `${apiUrl}/users/${userId}/ton/deposits`;
+              const { json } = await httpClient(url);
+
+              return {
+                  data: json.map((item: any) => ({
+                      ...item,
+                      id: item._id || item.txHash
+                  })),
+                  total: json.length
+              };
+          }
+
+          if (resource === 'ton_summary') {
+              const userId = params.filter?.user_id;
+              if (!userId) throw new Error('user_id is required for ton_summary');
+
+              const url = `${apiUrl}/users/${userId}/ton/summary`;
+              const { json } = await httpClient(url);
+
+              return {
+                  data: {
+                      id: userId,
+                      ...json
+                  }
+              };
+          }
+
+///////////////
 
         if (resource === 'manufacture_user') {
           const userId = params.filter?.user_id;
@@ -72,28 +118,22 @@ export const dataProvider: DataProvider = {
         const url = `${apiUrl}/coinage_user/${userId}`; // ← тут путь с userId
         const response = await httpClient(url);
 
+        if (Array.isArray(response.json.data)) {
+          return {
+            data: [],
+            total: 0
+          };
+        }
+
         return {
           data: Array.isArray(response.json) ? response.json : [response.json],
           total: Array.isArray(response.json) ? response.json.length : 1
         };
       }
 
-        // Обработка для выводов TON
-        if (resource === 'ton_withdraw') {
-            const userId = params.filter?.user_id;
-            if (!userId) throw new Error('user_id is required for ton_withdraw');
-            
-            const url = `${apiUrl}/users/${userId}/ton/withdrawals`;
-            const { json } = await httpClient(url);
-            
-            return {
-                data: json.map((item: any) => ({
-                    ...item,
-                    id: item._id || item.transaction_id
-                })),
-                total: json.length
-            };
-        }
+      
+
+       
 
         // Стандартная обработка для других ресурсов
         const query = {

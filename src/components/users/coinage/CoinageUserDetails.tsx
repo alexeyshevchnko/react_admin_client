@@ -11,8 +11,8 @@ import {
   Divider,
   useMediaQuery,
   CircularProgress
-} from '@mui/material';
-import { IconWithLabel } from '../../common/iconComponents';
+} from '@mui/material'; 
+import { IconWithLabel } from '../../../common/iconComponents';
 
 interface ProcessSpeed {
   type: string;
@@ -69,6 +69,7 @@ export const CoinageUserDetails = () => {
         <Card key={record.id} sx={{ mb: 2, borderRadius:0, boxShadow: 1 }}>
           <CardContent> 
             {/* Основные характеристики */}
+            Основные характеристики: 
             <Box display="flex" flexDirection={isSmall ? 'column' : 'row'} gap={2} mt={1.5}>
               <Box flex={1}>   
                  <Box display="flex" alignItems="center">
@@ -81,15 +82,15 @@ export const CoinageUserDetails = () => {
                 </Box>
  
                 <Typography variant="body2">
-                  level: <strong>{record.level}</strong>
+                  level: {record.level}
                 </Typography>
                 <Typography variant="body2">
-                  <strong>level_speed:</strong> {record.level_speed}
+                  level_speed: {record.level_speed}
                 </Typography>
                 <Typography variant="body2">
-                  <strong>level_storage_gems:</strong> {record.level_storage_gems}
+                  level_storage_gems: {record.level_storage_gems}
                 </Typography><Typography variant="body2">
-                  <strong>level_storage_ingots:</strong> {record.level_storage_ingots}
+                  level_storage_ingots: {record.level_storage_ingots}
                 </Typography>
               </Box>
                
@@ -97,8 +98,8 @@ export const CoinageUserDetails = () => {
 
             {/* Даты */}
             <Box mt={1.5}>
-              <Typography variant="body2">
-                <strong>Обновлено:</strong>{' '}
+              <Typography variant="body2">             
+                Обновлено:{' '}
                 <DateField 
                   record={record} 
                   source="last_time_updated_process_speeed" 
@@ -115,7 +116,7 @@ export const CoinageUserDetails = () => {
                 />
               </Typography>
               <Typography variant="body2">
-                <strong>Создано:</strong>{' '}
+                Создано:{' '}
                 <DateField 
                   record={record} 
                   source="created_at" 
@@ -135,16 +136,15 @@ export const CoinageUserDetails = () => {
 
             {/* Скорости обработки */}
             <Divider sx={{ my: 1.5 }} />
-            <Typography variant="subtitle2" fontWeight="bold" mb={1}>
-              Скорости обработки:
-            </Typography>
-            <Box display="grid" gridTemplateColumns={isSmall ? '1fr' : '1fr 1fr'} gap={1}>
+            Скорости обработки: 
+
+            <Box display="grid" gridTemplateColumns={isSmall ? '1fr' : '1fr 1fr'}  gap={2} mt={1.5}>
               {record.process_speed_in_second?.map((speed: ProcessSpeed, index: number) => (
                 <Box key={index} display="flex" alignItems="center">
-                  <Typography variant="body2" sx={{ minWidth: 90 }}>
+                  <Typography variant="body2" component="span" sx={{ minWidth: 90 }}>
                     <IconWithLabel record={{ TYPE:  speed.type }} />
                   </Typography>
-                  <Typography variant="body2" fontWeight="bold">
+                  <Typography variant="body2" >
                     {speed.amount.toFixed(6)}/сек
                   </Typography>
                 </Box>
@@ -153,21 +153,20 @@ export const CoinageUserDetails = () => {
 
             {/* Циклы обработки */}
             {record.process_cycle?.length > 0 && (
-              <>
+              <> 
                 <Divider sx={{ my: 1.5 }} />
-                <Typography variant="subtitle2" fontWeight="bold" mb={1}>
-                  Текущий цикл обработки:
-                </Typography>
+                Текущий цикл обработки:
+                    
                 {record.process_cycle.map((cycle: ProcessCycle, index: number) => (
-                  <Box key={index} display="flex" alignItems="center">
-                  <Typography variant="body2" sx={{ minWidth: 100 }}>
+                  <Box key={index} display="flex" alignItems="center" gap={2} mt={1.5}>
+                  <Typography variant="body2" component="span" sx={{ minWidth: 100 }}>
                     <IconWithLabel record={{ TYPE: cycle.to_currensy_type }} />
                   </Typography>
                   <Typography variant="body2" sx={{ minWidth: 50 }}>
                     :{cycle.to_currensy_amount.toFixed(2)}
                   </Typography>
                   <Typography variant="body2">
-                      Прогресс: <strong>{cycle.progress_percent.toFixed(1)}%</strong>
+                      Прогресс: {cycle.progress_percent.toFixed(1)}% 
                   </Typography>
                 </Box> 
                 ))}

@@ -1,22 +1,11 @@
 // src/App.tsx
 import { Admin, Resource } from 'react-admin';
 import { dataProvider } from './dataProvider';
-//import { theme } from './theme';
-
-// Компоненты
 import { UserList} from './components/users/UserList';
-import { UserShow } from './components/users/UserShow';
-/*import { TransactionList } from './components/transactions';
-import { ManufactureList } from './components/manufacture';
-import { MarketStats } from './components/market';
-import { StorageList } from './components/storage';
-import { SuspiciousActivity } from './components/suspicious';
-import { AppDashboard } from './pages/Dashboard';
+import { UserShow } from './components/users/UserShow'; 
+import { StockList } from './components/stocks/StockList';
+import { StockShow } from './components/stocks/StockShow';
 
-// Кастомные поля
-import { ObjectField } from './components/shared/ObjectField';
-import { CurrencyField } from './components/shared/CurrencyField';
-*/
 const App = () => (
   <Admin 
     dataProvider={dataProvider}
@@ -32,6 +21,14 @@ const App = () => (
      // edit={UserEdit}
       recordRepresentation="NICKNAME"
       options={{ label: 'Пользователи' }}
+    />
+
+    <Resource
+      name="stocks"
+      list={StockList}
+      show={StockShow}
+      recordRepresentation="type"
+      options={{ label: 'Акции' }}
     />
      
     {/* Кастомные поля для всех ресурсов */}

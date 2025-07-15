@@ -1,4 +1,12 @@
+import { Box } from "@mui/material";
 import { Datagrid, DatagridProps } from "react-admin";
+import { ReactNode } from 'react';
+
+interface ResponsiveFlexBoxProps {
+  children: ReactNode;
+  maxWidth?: number | string;
+}
+
 
 export const NoCheckboxDatagrid = ({ children, ...props }: DatagridProps) => (
     <Datagrid
@@ -22,3 +30,23 @@ export const NoCheckboxDatagrid = ({ children, ...props }: DatagridProps) => (
         {children}
     </Datagrid>
 ); 
+
+
+export const ResponsiveFlexBox = ({ children, maxWidth = 850 }: ResponsiveFlexBoxProps) => {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        gap: 2,
+        justifyContent: 'left',
+        overflowX: 'auto', // добавлено здесь
+        width: '100%',
+      }}
+    >
+      <Box sx={{ minWidth: 300, maxWidth: maxWidth, width: '100%' }}>
+        {children}
+      </Box>
+    </Box>
+  );
+};
