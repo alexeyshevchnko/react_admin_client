@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { CopyableAddress } from '../../../common/commonComponents';
 
 const TonTransactionsSection = () => {
     const record = useRecordContext();
@@ -134,12 +135,16 @@ const TonTransactionsSection = () => {
                                         </ListItemAvatar>
                                         <ListItemText
                                             primary={`${formatTon(tx.in_msg?.value)} TON`}
+                                            secondaryTypographyProps={{ component: 'div' }}
                                             secondary={renderLines([
-                                                `source: ${tx.in_msg?.source}`,
-                                                `destination: ${tx.in_msg?.destination}`,
-                                                `Хэш: ${tx.txHash}`,
-                                                `message: ${tx.in_msg?.message}`,
-                                                `status: ${tx.status}`,
+                                                  
+                                                  <div>
+                                                    <CopyableAddress label="destination" value={tx.in_msg?.destination} />
+                                                 </div>, 
+                                                  <div>
+                                                    <CopyableAddress label="Хэш" value={tx.txHash} />
+                                                 </div>,  
+                                                `message: ${tx.in_msg?.message}`, 
                                                 formatDate(tx.in_msg?.created_lt),
                                             ])}
                                         />

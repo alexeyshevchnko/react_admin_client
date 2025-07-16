@@ -1,4 +1,3 @@
-// src/components/iconComponents.tsx
 import { getResourcesIcon } from './resourceLoader'; 
 
 interface IconWithLabelProps {
@@ -7,9 +6,14 @@ interface IconWithLabelProps {
     type?: string;
   };
   fieldName?: 'TYPE' | 'type';
+  showLabel?: boolean; // <-- новый флаг
 }
- 
-export const IconWithLabel = ({ record, fieldName = 'TYPE' }: IconWithLabelProps) => {
+
+export const IconWithLabel = ({
+  record,
+  fieldName = 'TYPE',
+  showLabel = true, // по умолчанию true
+}: IconWithLabelProps) => {
   const value = record?.[fieldName] || '';
   const icon = getResourcesIcon(value);
 
@@ -26,15 +30,15 @@ export const IconWithLabel = ({ record, fieldName = 'TYPE' }: IconWithLabelProps
           }} 
         />
       )}
-      <span>{value}</span>
+      {showLabel && <span>{value}</span>} {/* ← только если showLabel */}
     </div>
   );
 };
- 
-export const ResourcesTypeWithIcon = ({ record }: IconWithLabelProps) => (
-  <IconWithLabel record={record} fieldName="TYPE" />
+
+export const ResourcesTypeWithIcon = (props: IconWithLabelProps) => (
+  <IconWithLabel {...props} fieldName="TYPE" />
 );
 
-export const DwarfTypeWithIcon = ({ record }: IconWithLabelProps) => (
-  <IconWithLabel record={record} fieldName="type" />
+export const DwarfTypeWithIcon = (props: IconWithLabelProps) => (
+  <IconWithLabel {...props} fieldName="type" />
 );

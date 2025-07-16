@@ -17,7 +17,7 @@ export const dataProvider: DataProvider = {
 /////////////
           if (resource === 'ton_withdraw') {
               const hasWallet = params.filter?.hasWallet;
-              if(!hasWallet){
+              if(!hasWallet){ 
                   return {
                     data:[],
                     total: 0
@@ -78,6 +78,38 @@ export const dataProvider: DataProvider = {
           }
 
 ///////////////
+if (resource === 'market_buyer') {
+    const userId = params.filter?.user_id;
+    if (!userId) throw new Error('user_id is required for market_buyer');
+
+    const url = `${apiUrl}/market/buyer/${userId}`;
+    const { json } = await httpClient(url);
+
+    return {
+        data: Array.isArray(json) ? json.map((item: any) => ({
+            ...item,
+            id: item._id || item.id
+        })) : [],
+        total: Array.isArray(json) ? json.length : 0
+    };
+}
+
+if (resource === 'market_salesman') {
+    const userId = params.filter?.user_id;
+    if (!userId) throw new Error('user_id is required for market_salesman');
+
+    const url = `${apiUrl}/market/salesman/${userId}`;
+    const { json } = await httpClient(url);
+
+    return {
+        data: Array.isArray(json) ? json.map((item: any) => ({
+            ...item,
+            id: item._id || item.id
+        })) : [],
+        total: Array.isArray(json) ? json.length : 0
+    };
+}
+
 
         if (resource === 'manufacture_user') {
           const userId = params.filter?.user_id;

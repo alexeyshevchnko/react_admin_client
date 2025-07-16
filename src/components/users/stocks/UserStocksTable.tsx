@@ -1,4 +1,4 @@
-import { useGetList, useRecordContext, Link } from 'react-admin';
+import { useGetList, useRecordContext,  FunctionField } from 'react-admin';
 import {
     Typography,
     CircularProgress,
@@ -8,27 +8,8 @@ import {
 import { NumberField } from 'react-admin';
 import { NoCheckboxDatagrid, ResponsiveFlexBox } from '../../../common/commonComponents';
 import DateTimeField from '../../../common/dateTimeField';
-import RecordList from '../../../common/RecordList';
-
-const StockTypeLink = () => {
-    const record = useRecordContext();
-    if (!record?.stock_id) return null;
-
-    return (
-        <Link to={`/stocks/${record.stock_id._id}/show`}>
-            <Typography 
-                color="primary" 
-                sx={{ 
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    '&:hover': { opacity: 0.8 }
-                }}
-            >
-                {record.stock_id.type}
-            </Typography>
-        </Link>
-    );
-};
+import RecordList from '../../../common/RecordList'; 
+import { StockIdLink } from '../../../common/LinkHelper';
 
 export const UserStocksTable = () => {
     const record = useRecordContext();
@@ -57,7 +38,15 @@ export const UserStocksTable = () => {
                                 {
                                     label: '',
                                     source: '_id',
-                                    render: (_val, _rec) => <StockTypeLink />,
+                                    render: (_val, _rec) => <FunctionField
+                                            label="Тип товара"
+                                            render={(record: any) => {
+                                                const stock = record?.stock_id;
+                                                if (!stock) return null;
+
+                                                return <StockIdLink id={stock._id} label={stock.type} />;
+                                            }}
+                                        />
                                 },
                                 {
                                     label: 'Amount',
@@ -95,7 +84,15 @@ export const UserStocksTable = () => {
                         data={data}
                         bulkActionButtons={false}
                     > 
-                        <StockTypeLink />
+                        <FunctionField
+                            label="Тип товара"
+                            render={(record: any) => {
+                                const stock = record?.stock_id;
+                                if (!stock) return null;
+
+                                return <StockIdLink id={stock._id} label={stock.type} />;
+                            }}
+                        />
                         <NumberField source="stock_amount" label="Количество" />
                      
                         <NumberField 

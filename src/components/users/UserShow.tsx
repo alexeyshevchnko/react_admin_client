@@ -5,7 +5,9 @@ import {
     useRecordContext, 
     TopToolbar,
     EditButton,
-    DeleteButton, 
+    DeleteButton,
+    useGetOne,
+    Loading, 
 } from 'react-admin';
 
 import {
@@ -15,12 +17,13 @@ import {
     Box,
     Accordion,
     AccordionSummary,
-    AccordionDetails
+    AccordionDetails,
+    Divider
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ReactNode, useState } from 'react'; 
-import { ResponsiveFlexBox } from '../../common/commonComponents';
+import { CopyableAddress, ResponsiveFlexBox } from '../../common/commonComponents';
 import TonTransactionsSection from './tonTransactions/TonTransactionsSection';
 import { ManufactureUserDetails } from './manufacture/ManufactureUserDetails'; 
 import { CoinageUserDetails } from './coinage/CoinageUserDetails';
@@ -28,6 +31,9 @@ import { CurrenciesDetails } from './currencies/CurrenciesDetails';
 import { DwarvesDetails } from './dwarves/DwarvesDetails';
 import DateTimeField from '../../common/dateTimeField';
 import { UserStocksTable } from './stocks/UserStocksTable';
+import { useParams } from 'react-router';
+import { UserMarketSalesTable } from './stocks/UserMarketSalesTable';
+import { UserMarketBuysTable } from './stocks/UserMarketBuysTable';
 
 const UserTitle = () => {
     const record = useRecordContext();
@@ -81,7 +87,14 @@ const LazyAccordion = ({ title, children, defaultExpanded = false }: LazyAccordi
     );
 };
 
-export const UserShow = () => {
+export const UserShow = () => { 
+
+    const { id } = useParams();
+    const { data: record, isLoading } = useGetOne('users', { id });
+
+    if (isLoading) return <Loading />; 
+    if (!record) return <div>Пользователь не найден</div>;
+ 
     return (
         <Show title={<UserTitle />} actions={<UserShowActions />}>
             <Box sx={{ width: '100%' }}>
@@ -95,7 +108,9 @@ export const UserShow = () => {
                                 <TextField source="ID" label="ID пользователя" />
                                 <TextField source="NICKNAME" label="Никнейм" />
                                 <Box sx={{ wordBreak: 'break-all' }}>
-                                    <TextField source="WALLET" label="WALLET" />
+                                    <Box sx={{ wordBreak: 'break-all' }}> 
+                                        <CopyableAddress label="WALLET" value={record?.WALLET || ''} />
+                                    </Box> 
                                 </Box>
                                 <DateTimeField source="REGISTRATION" label="Дата регистрации" />
                                 <DateTimeField source="LAST_DAY_ONLINE" label="Последняя активность" />
@@ -148,10 +163,17 @@ export const UserShow = () => {
                 <LazyAccordion title="[Операции по акциям]">
                     <AccordionDetails sx={{ overflowX: 'auto' }}>
                         <ResponsiveFlexBox>
-                            <UserStocksTable />
+                           {/* <UserStocksTable />*/}
+                                <Divider sx={{ my: 5 }} />
+                                <UserMarketBuysTable />
+                                <Divider sx={{ my: 5 }} />
+                                {/*<UserMarketSalesTable />*/}
                         </ResponsiveFlexBox>
                     </AccordionDetails>
                 </LazyAccordion>
+
+                
+
             </Box>
         </Show>
     );

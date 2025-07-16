@@ -13,8 +13,13 @@ const ProcessCycleField: React.FC<FieldProps> = (props) => {
     <ul style={{ margin: 0, paddingLeft: 16 }}>
       {record.process_cicle.map((item: any, index: number) => (
         <li key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <IconWithLabel record={{ TYPE: item.to_currensy_type }} />
-          <span>
+          <IconWithLabel record={{ TYPE: item.to_currensy_type }} /> 
+          <span style={{ 
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            textAlign:  'right'
+                        }}>
             {item.to_currensy_amount.toFixed(2)} ({item.progress_percent.toFixed(1)}%)
           </span>
         </li>

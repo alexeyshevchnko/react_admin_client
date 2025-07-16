@@ -10,6 +10,7 @@ import { useMediaQuery, Theme } from '@mui/material';
 import ProcessCycleField from './ProcessCycleField';  
 import RecordList from '../../../common/RecordList';
 import DateTimeField from '../../../common/dateTimeField';
+import { NoCheckboxDatagrid } from '../../../common/commonComponents';
  
 
 const StatusAndLevelField = () => {
@@ -38,16 +39,11 @@ export const ManufactureUserDetails: React.FC<Partial<ListProps>> = (props) => {
     >
       {isSmall ? (
           <div style={{ overflowX: 'auto' }}>
-            <Datagrid
-              bulkActionButtons={false}
-              rowClick={false}
-              sx={{
-                '& .RaDatagrid-table': {
-                  width: '100%',
-                  minWidth: '370px',  
-                },
-              }}
-            >
+            <NoCheckboxDatagrid  
+                                    bulkActionButtons={false}
+                                >
+
+                                  
               <ProcessCycleField source="process_cicle" label="Process Cycle" />
               <RecordList
                   fields={[
@@ -66,7 +62,7 @@ export const ManufactureUserDetails: React.FC<Partial<ListProps>> = (props) => {
                       },
                   ]}
               />
-            </Datagrid>
+            </NoCheckboxDatagrid>
           </div>
         ) : (
           <Datagrid
