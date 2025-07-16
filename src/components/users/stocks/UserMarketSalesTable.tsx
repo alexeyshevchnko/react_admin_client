@@ -90,14 +90,10 @@ export const UserMarketSalesTable = () => {
                                     render: (_val, _rec) =>   <FunctionField
                                         label="Цена"
                                         render={(record: any) => {
-                                            if (!record.price) return "-"; 
-                                            const typeRecord = record.price?.type; 
+                                            if (!record.price) return "-";  
 
-                                            return (
-                                            
-                                                <span>{`${record.price.amount} ${record.price.type}`}</span>
-                                                     
-                                                
+                                            return ( 
+                                                <span>{`${record.price.amount} ${record.price.type}`}</span>   
                                             );
                                         }}
                                     />  ,
