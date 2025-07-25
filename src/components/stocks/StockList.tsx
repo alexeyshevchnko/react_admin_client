@@ -4,7 +4,7 @@ import { ResponsiveFlexBox } from '../../common/commonComponents';
 export const StockList = () => (
     <ResponsiveFlexBox>
     <List>
-        <Datagrid rowClick="show">
+        <Datagrid rowClick="show" bulkActionButtons={false}>
         <TextField source="type" label="Тип" />
         <NumberField source="all_amount" label="Всего" />
         <NumberField source="sold_amount" label="Продано" />

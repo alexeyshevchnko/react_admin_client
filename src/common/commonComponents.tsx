@@ -123,7 +123,7 @@ export const CopyableAddress = ({ label, value }: CopyableAddressProps) => {
           severity="success"
           sx={{ width: '100%' }}
         >
-          Скопировано в буфер обмена!
+          Copied!
         </Alert>
       </Snackbar>
     </>

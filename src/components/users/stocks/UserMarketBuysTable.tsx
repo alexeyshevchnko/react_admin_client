@@ -50,8 +50,7 @@ export const UserMarketBuysTable = () => {
                                         label="Товар"
                                         render={(record: any) => {
                                             const stock = record?.user_stock_id?.stock_id;
-                                            if (!stock) return null;
-
+                                            if (!stock) return null; 
                                             return <StockIdLink id={stock._id} label={stock.type} />;
                                         }}
                                     /> ,
@@ -59,8 +58,9 @@ export const UserMarketBuysTable = () => {
                                 {
                                     label: 'Продавец',
                                     source: 'salesman_user_id', 
+                                    alignRight: true,
                                     render: (_val, _rec) =>  <FunctionField
-                                        label="Продавец"
+                                        label="Продавец" 
                                         render={(record: any) => { 
                                                 const user = record?.salesman_user_id;
                                                 if (!user) return null;
@@ -82,16 +82,22 @@ export const UserMarketBuysTable = () => {
                                     source: 'end_of_bidding_at', 
                                     render: (_val, _rec) =>   <DateTimeField source="end_of_bidding_at" label="End" showTime={false}  /> ,
                                 },
+                                { 
+                                    label: 'Количество',
+                                    source: 'amount', 
+                                    render: (_val, _rec) =>  <NumberField source="amount" label="Количество" />
+                                },
                                 {
                                     label: 'Цена',
-                                    source: 'price.amount', 
+                                    source: '_id', 
                                     render: (_val, _rec) =>   <FunctionField
                                         label="Цена"
                                         render={(record: any) => {
                                             if (!record.price) return "-";  
-                                            return ( 
-                                                <span>{`${record.price.amount} ${record.price.type}`}</span>   
-                                            );
+                                            return (<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <span>{`${record.price.amount}`}</span>
+                                                        <ResourcesTypeWithIcon record={{ TYPE: record.price.type,  }} showLabel={false} />
+                                                    </div>);
                                         }}
                                     />  ,
                                 } ,

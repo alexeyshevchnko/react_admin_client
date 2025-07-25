@@ -52,8 +52,7 @@ export const UserMarketSalesTable = () => {
                                         label="Товар"
                                         render={(record: any) => {
                                             const stock = record?.user_stock_id?.stock_id;
-                                            if (!stock) return null;
-
+                                            if (!stock) return null; 
                                             return <StockIdLink id={stock._id} label={stock.type} />;
                                         }}
                                     /> ,
@@ -61,6 +60,7 @@ export const UserMarketSalesTable = () => {
                                 {
                                     label: 'Покупатель',
                                     source: 'buyer_user_id', 
+                                    alignRight: true,
                                     render: (_val, _rec) =>  <FunctionField
                                         label="Покупатель"
                                         render={(record: any) => { 
@@ -90,18 +90,23 @@ export const UserMarketSalesTable = () => {
                                     render: (_val, _rec) =>   <FunctionField
                                         label="Цена"
                                         render={(record: any) => {
-                                            if (!record.price) return "-";  
-
-                                            return ( 
-                                                <span>{`${record.price.amount} ${record.price.type}`}</span>   
-                                            );
+                                            if (!record.price) return "-";   
+                                            return (<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <span>{`${record.price.amount}`}</span>
+                                                        <ResourcesTypeWithIcon record={{ TYPE: record.price.type,  }} showLabel={false} />
+                                                    </div>);
                                         }}
                                     />  ,
                                 } ,
+                                { 
+                                    label: 'Количество',
+                                    source: 'amount', 
+                                    render: (_val, _rec) =>  <NumberField source="amount" label="Количество" />
+                                },
                                 {
                                     label: 'Статус',
                                     source: 'status', 
-                                    render: (_val, _rec) =>   <TextField source="status" label="Статус" />  ,
+                                    render: (_val, _rec) => <TextField source="status" label="Статус" />,
                                 },
                             ]}
                         /> 
@@ -137,8 +142,8 @@ export const UserMarketSalesTable = () => {
                                 const typeRecord = record.price?.type; 
 
                                 return (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <span>{`${record.price.amount} ${record.price.type}`}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                         <span>{`${record.price.amount} ${record.price.type}`}</span>
                                         <ResourcesTypeWithIcon record={{ TYPE: typeRecord,  }} showLabel={false} />
                                     </div>
                                 );

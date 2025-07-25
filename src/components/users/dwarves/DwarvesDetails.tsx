@@ -15,8 +15,10 @@ export const DwarvesDetails = () => {
     const record = useRecordContext();
     const { data, isLoading } = useGetList('user_dwarves', {
         filter: { user_id: record?.ID?.toString() },
-        pagination: { page: 1, perPage: 100 }
+        pagination: { page: 1, perPage: 100 },
+        //sort: { field: 'created_at', order: 'ASC' },
     });
+
 
     if (isLoading) return <div>Загрузка данных о дворфах...</div>;
     if (!data || data.length === 0) return <div>Нет данных о дворфах</div>;
@@ -27,19 +29,33 @@ export const DwarvesDetails = () => {
             sx={{ minWidth: 650 }}
         >
             <ReferenceField
+    source="dwarf_id"
+    reference="dwarves"
+    label="Тип"
+    link={false}
+    sortable
+>
+    <FunctionField
+        source="type"
+        render={(dwarfRecord) => <DwarfTypeWithIcon record={dwarfRecord} />}
+    />
+</ReferenceField>
+
+
+            <ReferenceField
                 source="dwarf_id"
                 reference="dwarves"
-                label="Тип"
+                label="sort"
                 link={false}
                 sortable
             >
-                <FunctionField
-                    source="type"
-                    render={(dwarfRecord) => <DwarfTypeWithIcon record={dwarfRecord} />}
-                />
+                 
+                <NumberField source="sort" label="sort" sortable />
             </ReferenceField>
+            
             <NumberField source="count" label="Количество" sortable />
-            <DateTimeField source="created_at" label="Получил" />
+            
+            <DateTimeField source="created_at" label="Получил" showTime ={false} />
              
         </NoCheckboxDatagrid>
     );

@@ -2,12 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
-interface StockTypeLinkProps {
+interface TypeLinkProps {
   id: string;
   label: string;
 }
 
-export const StockIdLink: React.FC<StockTypeLinkProps> = ({ id, label }) => {
+export const StockIdLink: React.FC<TypeLinkProps> = ({ id, label }) => {
   if (!id || !label) return null;
 
   return (
@@ -27,7 +27,7 @@ export const StockIdLink: React.FC<StockTypeLinkProps> = ({ id, label }) => {
 }; 
 
 
-export const UserIdLink: React.FC<StockTypeLinkProps> = ({ id, label }) => {
+export const UserIdLink: React.FC<TypeLinkProps> = ({ id, label }) => {
   if (!id || !label) return null;
   
   return (

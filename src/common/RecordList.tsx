@@ -5,7 +5,7 @@ type RecordListField = {
     label?: string;
     source: string;
     render?: (value: any, record: any) => ReactNode;
-    alignRight?: boolean; // Новый параметр для выравнивания по правому краю
+    alignRight?: boolean;
 };
 
 const RecordList = ({ fields }: { fields: RecordListField[] }) => {
@@ -13,48 +13,36 @@ const RecordList = ({ fields }: { fields: RecordListField[] }) => {
     if (!record) return null;
 
     return (
-        <ul style={{ 
-            margin: 0, 
-            paddingLeft: 16,
-            
-        }}>
+        <ul style={{ margin: 0, paddingLeft: 16 }}>
             {fields.map((field, index) => {
                 const value = record[field.source];
                 const renderedValue = field.render
                     ? field.render(value, record)
                     : value?.toString?.() ?? '—';
 
+                const alignStyle =   'left';
+
                 return (
-                    <li 
-                        key={index} 
-                        style={{ 
+                    <li
+                        key={index}
+                        style={{
                             display: 'flex',
-                            justifyContent: field.alignRight ? 'flex-end' : 'flex-start', // Выравнивание
-                            alignItems: 'center',
-                            gap: '8px',
-                            padding: '4px 0'
+                            flexDirection: field.alignRight ? 'column' : 'row',
+                            justifyContent: field.alignRight ? 'flex-end' : 'flex-start',
+                            alignItems:  'baseline',
+                            padding: '4px 0',
+                            gap: field.alignRight ? undefined : '4px',
                         }}
                     >
-                        <span style={{ 
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            textAlign: field.alignRight ? 'right' : 'left' // Дублируем выравнивание для текста
-                        }}>
-                            {field.label && (
-                                <>
-                                    <strong>{field.label}</strong>
-                                    {': '}
-                                </>
-                            )}
-                            <span style={{
-                                display: 'inline-block',
-                                width: 'auto', // Для правильного выравнивания
-                                textAlign: field.alignRight ? 'right' : 'left'
-                            }}>
-                                {renderedValue}
-                            </span>
-                        </span>
+                        {field.label && (
+                            <strong style={{ textAlign: alignStyle }}>
+                                {field.label}
+                                {':'}
+                            </strong>
+                        )}
+                        <div style={{ textAlign: alignStyle }}>
+                            {renderedValue}
+                        </div>
                     </li>
                 );
             })}
